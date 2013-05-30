@@ -1,0 +1,49 @@
+﻿<!DOCTYPE html>
+<html xmlns = "http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <link href = "../../css/dropdown.css" rel = "stylesheet"/>
+    <link href = "../../css/select2.css" rel = "stylesheet"/>
+    <script src = "../../dependecies/jquery-1.10.0.js"></script>
+    <script src = "../../dependecies/select2-3.4.0.js"></script>
+    <script src = "https://ajax.googleapis.com/ajax/libs/angularjs/1.0.5/angular.js"></script>
+    <script src = "../directives/angular.directives.dropdown.js"></script>
+
+
+    <script type = "text/javascript">
+        var mainapp = angular.module("myapp", ["angular.directives.dropdown"]);
+
+        var MainCtrl = function ($scope) {
+            $scope.welcome = "Welcome";
+            $scope.allValues = [];
+            for (var i = 0; i < 30; i++) {
+                $scope.allValues.push(
+                        {
+                            id:  i,
+                            text:"option " + i
+                        });
+            }
+            ;
+
+            $scope.selectIndex = function (index) {
+                $scope.selectedValue = $scope.allValues[index];
+            }
+            $scope.deselect = function () {
+                $scope.selectedValue = undefined;
+            }
+        };
+    </script>
+
+</head>
+<body ng-controller = "MainCtrl" ng-app = "myapp">
+{{welcome}}
+<hr/>
+Selected value: {{selectedValue}}<br/>
+Dropdown:
+<dropdown ng-model = "selectedValue" id-field = "id" text-field = "text" items = "allValues"
+          allow-create = "true"></dropdown>
+<br/>
+<button ng-click = "selectIndex(1)">select option 2</button>
+<button ng-click = "deselect()">deselect</button>
+</body>
+</html>

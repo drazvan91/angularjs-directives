@@ -1,6 +1,6 @@
-angular.module("angular.directives.number", [])
-    .directive("number", function () {
-        var keyVal = function (keyCode) {
+angular.module("angular.directives.integer", [])
+    .directive("integer", function () {
+        var getKeyValue = function (keyCode) {
             if (keyCode === 189 || keyCode === 109 || keyCode === 173) {
                 return '-';
             }
@@ -10,8 +10,9 @@ angular.module("angular.directives.number", [])
             if ((keyCode >= 96 && keyCode <= 105) || (keyCode >= 48 && keyCode <= 57)) {
                 return String(keyCode % 48);
             }
+            return undefined;
         };
-        var intValidator = function (event) {
+        var keyValidator = function (event) {
             var caretStart = event.target.selectionStart,
                 caretEnd = event.target.selectionEnd,
                 key = event.keyCode,
@@ -20,23 +21,22 @@ angular.module("angular.directives.number", [])
             if (event.ctrlKey || event.altKey) {
                 return true;
             }
-
-            if (keyVal(key) === ' ') { //Don't allow any spaces
+            if (getKeyValue(key) === ' ') { //Don't allow any spaces
                 return false;
             }
             if (!event.shiftKey) {
-                if (keyVal(key) === "-") {
+                if (getKeyValue(key) === "-") {
                     return !(caretStart !== 0 || (caretEnd === 0 && lastValue.indexOf("-") !== -1));
                 }
 
-                if (keyVal(key) >= "0" && keyVal(key) <= "9") {
+                if (getKeyValue(key) >= "0" && getKeyValue(key) <= "9") {
                     if (lastValue.charAt(0) === "-" && caretStart === 0 && caretEnd === 0) {
                         return false;
                     }
                     if ((lastValue.charAt(0) === "0" && caretStart !== 0) || (lastValue === "-0" && caretStart !== 1)) {
                         return false;
                     }
-                    if (keyVal(key) === "0") {
+                    if (getKeyValue(key) === "0") {
                         if ((lastValue.charAt(0) === "-" && caretStart === 1 &&
                             caretEnd !== lastValue.length && lastValue.length !== 1)
                             || (caretStart === 0 && caretEnd !== lastValue.length && lastValue.length !== 0)) {
@@ -50,23 +50,11 @@ angular.module("angular.directives.number", [])
 
 
         };
-        var floatValidator = function () {
-            return true
-        };
-
-        var types = {
-            "int":  intValidator,
-            "float":floatValidator
-        };
 
         var linkFunction = function (scope, element, attrs, ctrl) {
-            if (!types[attrs.vtype]) {
-                element.attr("vtype", "int");
-                attrs.vtype = "int"
-            }
 
-            var minval = Number(attrs.minval);
-            var maxval = Number(attrs.maxval);
+            var minval = Number(attrs.minval),
+                maxval = Number(attrs.maxval);
             if (minval && maxval && minval > maxval) {
                 console.warn("On directive number the minval is greater than maxval");
             }
@@ -80,11 +68,10 @@ angular.module("angular.directives.number", [])
 
             //Event Handlers
             var inputHandler = function (event) {
-                if (minval && minval > 0 && keyVal(event.keyCode) === '-') {
+                if (minval && minval > 0 && getKeyValue(event.keyCode) === '-') {
                     event.preventDefault();
                 }
-
-                if (!types[attrs.vtype](event)) {
+                if (!keyValidator(event)) {
                     event.preventDefault();
                 }
             };

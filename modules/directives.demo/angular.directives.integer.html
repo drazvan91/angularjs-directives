@@ -18,27 +18,30 @@
     </style>
     <script src = "https://ajax.googleapis.com/ajax/libs/angularjs/1.0.5/angular.js"></script>
     <script type = "text/javascript">
-        angular.module("myapp", ['angular.directives.number']);
+        angular.module("myapp", ['angular.directives.integer']);
     </script>
-    <script src = "../directives/angular.directives.number.js"></script>
+    <script src = "../directives/angular.directives.integer.js"></script>
 </head>
 <body>
 <div>
     <div class = "testCase">
         <span>In order for the directive to work, it must bind to an existing ng-model</span>
-        <span>Model:<input type = "text" ng-model = "age"/></span>
-        <span>Directive:<number ng-model = "age"></number></span>
+        <span><label>
+            Model:
+            <input type = "text" ng-model = "age"/>
+        </label></span>
+        <span>Directive:<integer ng-model = "age"></integer></span>
     </div>
 
     <div class = "testCase">
         <span>The directive only allows inputs in a given range</span>
-        <span>The range is -15 to 15:<number ng-model = "test1" minval = "-15" maxval = "15"></number></span>
+        <span>The range is -15 to 15:<integer ng-model = "test1" minval = "-15" maxval = "15"></integer></span>
 
         <span>If a minimum value is positive, the directive will not accept the minus character</span>
-        <span>Minimum value is 15:<number ng-model = "test2" minval = "15"></number></span>
+        <span>Minimum value is 15:<integer ng-model = "test2" minval = "15"></integer></span>
 
         <span>If an input is greater than a maximum value, the model changes to that maximum value</span>
-        <span>Maximum value is -15:<number ng-model = "test3" maxval = "-15"></number></span>
+        <span>Maximum value is -15:<integer ng-model = "test3" maxval = "-15"></integer></span>
 
     </div>
 </div>
