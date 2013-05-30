@@ -26,10 +26,8 @@ mainapp.directive("number", function () {
         }
         if (!event.shiftKey) {
             if (keyVal(key) === "-") {
-                if (caretStart !== 0 || (caretEnd === 0 && lastValue.indexOf("-") !== -1)) {
-                    return false;
-                }
-                return true;
+                return !(caretStart !== 0 || (caretEnd === 0 && lastValue.indexOf("-") !== -1));
+
             }
 
             if (keyVal(key) >= "0" && keyVal(key) <= "9") {
@@ -40,20 +38,20 @@ mainapp.directive("number", function () {
                     return false;
                 }
                 if (keyVal(key) === "0") {
-                    if ((lastValue.charAt(0) === "-" && caretStart === 1 && caretEnd !== lastValue.length && lastValue.length !== 1) || (caretStart === 0 && caretEnd !== lastValue.length && lastValue.length !== 0)) {
+                    if ((lastValue.charAt(0) === "-" && caretStart === 1 &&
+                        caretEnd !== lastValue.length && lastValue.length !== 1)
+                        || (caretStart === 0 && caretEnd !== lastValue.length && lastValue.length !== 0)) {
                         return false;
                     }
                 }
                 return true;
             }
         }
-        if (key <= 46) {
-            return true;
-        }
-        return false;
+        return key <= 46;
+
 
     };
-    var floatValidator = function (lastval, lastchar) {
+    var floatValidator = function () {
         return true
     };
 

@@ -1,0 +1,24 @@
+<!doctype html>
+<html ng-app = "myapp">
+<head>
+    <script src = "https://ajax.googleapis.com/ajax/libs/angularjs/1.0.5/angular.js"></script>
+    <script type = "text/javascript">
+        var mainapp = angular.module("myapp", []);
+
+        var MainCtrl = function ($scope) {
+            $scope.ceva = 15;
+        };
+    </script>
+    <script src = "../directives/angular.directives.number.js"></script>
+</head>
+<body ng-controller = "MainCtrl">
+
+Directive:
+<number ng-model = "ceva" minval = "-5" maxval = "152"></number>
+<br/>
+<label title = "Model: ">
+    <input type = "text" ng-model = "ceva"/>
+</label>
+</body>
+
+</html>
