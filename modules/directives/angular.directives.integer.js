@@ -53,9 +53,9 @@ angular.module("angular.directives.integer", [])
 
         var linkFunction = function (scope, element, attrs, ctrl) {
 
-            var minval = Number(attrs.minval),
-                maxval = Number(attrs.maxval);
-            if (minval && maxval && minval > maxval) {
+            var minval = parseInt(attrs.minval),
+                maxval = parseInt(attrs.maxval);
+            if (!isNaN(minval) && !isNaN(maxval) && minval > maxval) {
                 console.warn("On directive number the minval is greater than maxval");
             }
             var setElementValue = function (value) {
@@ -68,7 +68,7 @@ angular.module("angular.directives.integer", [])
 
             //Event Handlers
             var inputHandler = function (event) {
-                if (minval && minval > 0 && getKeyValue(event.keyCode) === '-') {
+                if (!isNaN(minval) && minval > 0 && getKeyValue(event.keyCode) === '-') {
                     event.preventDefault();
                 }
                 if (!keyValidator(event)) {
@@ -79,10 +79,10 @@ angular.module("angular.directives.integer", [])
                 var value = Number(event.target.value);
 
                 if (!isNaN(value)) {
-                    if (minval && value < 0 && value < minval) {
+                    if (!isNaN(minval) && value < 0 && value < minval) {
                         setElementValue(minval);
                     }
-                    if (maxval && value > 0 && value > maxval) {
+                    if (!isNaN(maxval) && value > 0 && value > maxval) {
                         setElementValue(maxval);
                     }
                 }
@@ -96,11 +96,11 @@ angular.module("angular.directives.integer", [])
                     setElementValue("");
                     return;
                 }
-                if (minval && value < minval) {
+                if (!isNaN(minval) && value < minval) {
                     setElementValue(minval);
                     return;
                 }
-                if (maxval && value > maxval) {
+                if (!isNaN(maxval) && value > maxval) {
                     setElementValue(maxval);
                     return;
                 }
