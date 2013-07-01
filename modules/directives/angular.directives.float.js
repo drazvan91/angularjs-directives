@@ -1,5 +1,5 @@
 'use strict';
-angular.module("angular.directives.float", []).directive("float", function(){
+angular.module("angular.directives.float", ['angular.directives.utils']).directive("float",['Utils', function(Utils){
 
 	function removeViewFormat(value, group_sep, dec_sep){
 		if(group_sep !== ''){
@@ -71,29 +71,29 @@ angular.module("angular.directives.float", []).directive("float", function(){
 	}
 
 	function linkFunction(scope, element, attrs, ctrl){
-		var LANGUAGE, DEC_SEP, GROUP_SEP, VALIDATORS;
+		var DEC_SEP, GROUP_SEP, VALIDATORS;
 		if(!ctrl){
 			return;
 		}
 
 		(function init(){
-			DEC_SEP = '.';
-			GROUP_SEP = '';
-			LANGUAGE = attrs['culture'] || "";
+			var language = attrs['culture'],
+				culture = null;
+			if(language){
+				culture = Utils.cultures.getCulture(language);
+			}
+			if(culture === null){
+				culture = Utils.cultures.getCurrentCulture();
+			}
+			DEC_SEP = culture.decimal_separator;
+			GROUP_SEP = culture.group_separator;
+
 			VALIDATORS = {
 				minval: parseFloat(attrs["minval"]),
 				maxval: parseFloat(attrs["maxval"]),
 				precision: parseFloat(attrs["precision"]) || 3,
 				default_val: parseFloat(attrs['default'])
 			};
-
-			if(LANGUAGE.toLowerCase() === "en"){
-				GROUP_SEP = ',';
-			}
-			else if(LANGUAGE.toLowerCase()==="nl"){
-				GROUP_SEP = '.';
-				DEC_SEP=',';
-			}
 
 			if(VALIDATORS.precision < 0){
 				VALIDATORS.precision = 3;
@@ -117,7 +117,7 @@ angular.module("angular.directives.float", []).directive("float", function(){
 
 		element.bind('focus', function(event){
 			var data = removeViewFormat(element.val(), GROUP_SEP, DEC_SEP);
-			data = data.replace('.',DEC_SEP);
+			data = data.replace('.', DEC_SEP);
 			element.val(data);
 		});
 
@@ -145,4 +145,4 @@ angular.module("angular.directives.float", []).directive("float", function(){
 		template: "<input type='text'/>",
 		link: linkFunction
 	}
-});
+}]);
