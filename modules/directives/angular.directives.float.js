@@ -1,11 +1,14 @@
 'use strict';
 angular.module("angular.directives.float", []).directive("float", function(){
+
 	function removeViewFormat(value, group_sep, dec_sep){
 		if(group_sep !== ''){
-			value = value.toString().replace(new RegExp(group_sep, 'g'), '');
+			value = value.toString().split(group_sep);
+			value = value.join("");
 		}
 		if(dec_sep !== '.'){
-			value = value.toString().replace(new RegExp(dec_sep, 'g'), '.');
+			value = value.split(dec_sep);
+			value = value.join('.');
 		}
 		return value;
 	}
@@ -17,7 +20,8 @@ angular.module("angular.directives.float", []).directive("float", function(){
 			is_negative = false,
 			new_value = "";
 
-		value = removeViewFormat(value, group_sep, dec_sep);
+		value = value.toString();
+		//value = removeViewFormat(value, group_sep, dec_sep);
 		dec_sep_index = value.indexOf('.');
 		is_negative = value.indexOf('-') !== -1;
 
@@ -41,7 +45,6 @@ angular.module("angular.directives.float", []).directive("float", function(){
 
 	function hasNumberValue(item){
 		return !(typeof item !== "number" || isNaN(item));
-
 	}
 
 	function validate(data, validators){
@@ -76,7 +79,7 @@ angular.module("angular.directives.float", []).directive("float", function(){
 		(function init(){
 			DEC_SEP = '.';
 			GROUP_SEP = '';
-			LANGUAGE = attrs['culture'] || "en";
+			LANGUAGE = attrs['culture'] || "";
 			VALIDATORS = {
 				minval: parseFloat(attrs["minval"]),
 				maxval: parseFloat(attrs["maxval"]),
@@ -87,6 +90,11 @@ angular.module("angular.directives.float", []).directive("float", function(){
 			if(LANGUAGE.toLowerCase() === "en"){
 				GROUP_SEP = ',';
 			}
+			else if(LANGUAGE.toLowerCase()==="nl"){
+				GROUP_SEP = '.';
+				DEC_SEP=',';
+			}
+
 			if(VALIDATORS.precision < 0){
 				VALIDATORS.precision = 3;
 			}
@@ -104,10 +112,12 @@ angular.module("angular.directives.float", []).directive("float", function(){
 			return data;
 		}
 
+
 		ctrl.$formatters.unshift(modelChanged);
 
 		element.bind('focus', function(event){
 			var data = removeViewFormat(element.val(), GROUP_SEP, DEC_SEP);
+			data = data.replace('.',DEC_SEP);
 			element.val(data);
 		});
 
