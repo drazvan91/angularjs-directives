@@ -57,6 +57,7 @@ angular.module("angular.directives.float", []).directive("float", function(){
 
 		function modelChanged(data){
 			data = validate(data || '');
+			data = applyFormat(data,GROUP_SEP,DEC_SEP);
 			return data;
 		}
 
