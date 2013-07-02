@@ -17,12 +17,9 @@ angular.module("angular.directives.integer", ['angular.directives.utils'])
 			value = value.toString();
 			is_negative = value.indexOf('-') !== -1;
 
-			integer_part = value.slice(Number(is_negative),
-									   value.length);
-			for(var i = integer_part.length - 4;
-				i >= 0; i -= 3){
-				integer_part = integer_part.slice(0,
-												  i + 1) + group_sep + integer_part.slice(i + 1);
+			integer_part = value.slice(Number(is_negative), value.length);
+			for(var i = integer_part.length - 4; i >= 0; i -= 3){
+				integer_part = integer_part.slice(0, i + 1) + group_sep + integer_part.slice(i + 1);
 			}
 
 			if(is_negative){
@@ -73,12 +70,9 @@ angular.module("angular.directives.integer", ['angular.directives.utils'])
 				GROUP_SEP = culture.group_separator;
 
 				VALIDATORS = {
-					minval: parseInt(attrs["minval"],
-									 10),
-					maxval: parseInt(attrs["maxval"],
-									 10),
-					default_val: parseInt(attrs['default'],
-										  10)
+					minval: parseInt(attrs["minval"], 10),
+					maxval: parseInt(attrs["maxval"], 10),
+					default_val: parseInt(attrs['default'], 10)
 				};
 			})();
 
@@ -86,9 +80,7 @@ angular.module("angular.directives.integer", ['angular.directives.utils'])
 				if(ctrl.$modelValue === undefined){
 					return data;
 				}
-				data = validate(parseInt(data,
-										 10),
-								VALIDATORS);
+				data = validate(parseInt(data, 10), VALIDATORS);
 				if(isNaN(data)){
 					return "";
 				}
@@ -99,32 +91,25 @@ angular.module("angular.directives.integer", ['angular.directives.utils'])
 
 			ctrl.$formatters.unshift(modelChanged);
 
-			element.bind('focus',
-						 function(){
-							 var data = removeViewFormat(element.val(),
-														 GROUP_SEP);
-							 element.val(data);
-						 });
+			element.bind('focus', function(){
+				var data = removeViewFormat(element.val(), GROUP_SEP);
+				element.val(data);
+			});
 
-			element.bind('blur',
-						 function(){
-							 var data = removeViewFormat(element.val(),
-														 GROUP_SEP);
+			element.bind('blur', function(){
+				var data = removeViewFormat(element.val(), GROUP_SEP);
 
-							 data = validate(parseInt(data,
-													  10),
-											 VALIDATORS);
-							 if(isNaN(data)){
-								 data = "";
-							 }
+				data = validate(parseInt(data, 10), VALIDATORS);
+				if(isNaN(data)){
+					data = "";
+				}
 
-							 scope.$apply(function(){
-								 ctrl.$setViewValue(data);
-							 });
-							 data = applyFormat(data,
-												GROUP_SEP);
-							 element.val(data);
-						 });
+				scope.$apply(function(){
+					ctrl.$setViewValue(data);
+				});
+				data = applyFormat(data, GROUP_SEP);
+				element.val(data);
+			});
 
 		}
 

@@ -1,6 +1,7 @@
 'use strict';
 angular.module("angular.directives.float", ['angular.directives.utils'])
 	.directive("float", ['Utils', function(Utils){
+
 		function removeViewFormat(value, group_sep, dec_sep){
 			if(group_sep !== ''){
 				value = value.toString().split(group_sep);
