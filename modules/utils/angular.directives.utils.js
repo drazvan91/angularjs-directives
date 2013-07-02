@@ -1,13 +1,6 @@
 "use strict";
 
-angular.module('angular.directives.utils',[]).factory("Utils",function(){
-	function CloneObject(){
-	};
-	function cloneObject(o){
-		CloneObject.prototype = o;
-		return new CloneObject();
-	}
-
+angular.module('angular.directives.utils', []).factory("Utils", function(){
 	var CULTURES = (function(){
 		var culture_list = [
 			{
@@ -41,14 +34,14 @@ angular.module('angular.directives.utils',[]).factory("Utils",function(){
 		function getCulture(cultureLang){
 			for(var i = 0; i < culture_list.length; i++){
 				if(culture_list[i].language === cultureLang){
-					return cloneObject(culture_list[i]);
+					return angular.copy(culture_list[i]);
 				}
 			}
 			return null;
 		}
 
 		function getCurrentCulture(){
-			return cloneObject(current_culture);
+			return angular.copy(current_culture);
 		}
 
 		return {

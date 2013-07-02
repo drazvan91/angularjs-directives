@@ -19,10 +19,12 @@
 		}
 	</style>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.5/angular.js"></script>
+	<script type="text/javascript" src="../utils/angular.directives.utils.js"></script>
+	<script src="../directives/angular.directives.integer.js"></script>
 	<script type="text/javascript">
 		angular.module("myapp", ['angular.directives.integer']);
 	</script>
-	<script src="../directives/angular.directives.integer.js"></script>
+
 </head>
 <body>
 <div>
@@ -32,7 +34,7 @@
 			Model:
 			<input type="text" ng-model="age" />
 		</label></span>
-		<span>Directive:<integer ng-model="age"></integer></span>
+		<span>Directive:<integer ng-model="age" culture="en"></integer></span>
 	</div>
 
 	<div class="testCase">
