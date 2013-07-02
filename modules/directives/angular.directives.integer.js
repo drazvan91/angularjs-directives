@@ -84,8 +84,7 @@ angular.module("angular.directives.integer", ['angular.directives.utils'])
 				if(isNaN(data)){
 					return "";
 				}
-				data = applyFormat(data,
-								   GROUP_SEP);
+				data = applyFormat(data, GROUP_SEP);
 				return data;
 			}
 
