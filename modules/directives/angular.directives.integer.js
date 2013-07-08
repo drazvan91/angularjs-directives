@@ -1,15 +1,16 @@
 'use strict';
 angular.module("angular.directives.integer", ['angular.directives.utils'])
-	.directive("integer", ['Utils', function(Utils){
-		function removeViewFormat(value, group_sep){
-			if(group_sep !== ''){
-				value = value.toString().split(group_sep);
+	.value('invalidClass',"css-invalid")
+	.directive("integer", ['Utils','invalidClass', function(Utils,invalidClass){
+		function removeViewFormat(value, culture){
+			if(culture.group_separator !== ''){
+				value = value.toString().split(culture.group_separator);
 				value = value.join("");
 			}
 			return value;
 		}
 
-		function applyFormat(value, group_sep){
+		function applyFormat(value, culture){
 			var integer_part,
 				is_negative,
 				new_value = "";
@@ -19,7 +20,7 @@ angular.module("angular.directives.integer", ['angular.directives.utils'])
 
 			integer_part = value.slice(Number(is_negative), value.length);
 			for(var i = integer_part.length - 4; i >= 0; i -= 3){
-				integer_part = integer_part.slice(0, i + 1) + group_sep + integer_part.slice(i + 1);
+				integer_part = integer_part.slice(0, i + 1) + culture.group_separator + integer_part.slice(i + 1);
 			}
 
 			if(is_negative){
@@ -53,28 +54,44 @@ angular.module("angular.directives.integer", ['angular.directives.utils'])
 		}
 
 		function linkFunction(scope, element, attrs, ctrl){
-			var GROUP_SEP, VALIDATORS;
+			var getCulture,VALIDATORS;
 			if(!ctrl){
 				return;
 			}
 
 			(function init(){
-				var language = attrs['culture'],
-					culture = null;
-				if(language){
-					culture = Utils.cultures.getCulture(language);
+				getCulture = Utils.cultures.getCurrentCulture;
+				if (attrs['culture']){
+					getCulture = function(){
+						return Utils.cultures.getCulture(attrs['culture']);
+					}
 				}
-				if(culture === null){
-					culture = Utils.cultures.getCurrentCulture();
-				}
-				GROUP_SEP = culture.group_separator;
-
 				VALIDATORS = {
 					minval: parseInt(attrs["minval"], 10),
 					maxval: parseInt(attrs["maxval"], 10),
 					default_val: parseInt(attrs['default'], 10)
 				};
 			})();
+
+			function viewChanged(data){
+				var temp_data = removeViewFormat(element.val(), getCulture()),
+					valid = validate(parseInt(temp_data,10),VALIDATORS);
+
+				if(!isNaN(valid)){
+					valid = parseInt(temp_data,10)===valid;
+				}
+				else{
+					valid = true;
+				}
+				if(!valid){
+					element[0].classList.add(invalidClass);
+				}
+				else{
+					element[0].classList.remove(invalidClass);
+				}
+
+				return data;
+			}
 
 			function modelChanged(data){
 				if(ctrl.$modelValue === undefined){
@@ -84,19 +101,20 @@ angular.module("angular.directives.integer", ['angular.directives.utils'])
 				if(isNaN(data)){
 					return "";
 				}
-				data = applyFormat(data, GROUP_SEP);
+				data = applyFormat(data, getCulture());
 				return data;
 			}
 
+			ctrl.$parsers.unshift(viewChanged);
 			ctrl.$formatters.unshift(modelChanged);
 
 			element.bind('focus', function(){
-				var data = removeViewFormat(element.val(), GROUP_SEP);
+				var data = removeViewFormat(element.val(), getCulture());
 				element.val(data);
 			});
 
 			element.bind('blur', function(){
-				var data = removeViewFormat(element.val(), GROUP_SEP);
+				var data = removeViewFormat(element.val(), getCulture());
 
 				data = validate(parseInt(data, 10), VALIDATORS);
 				if(isNaN(data)){
@@ -106,8 +124,9 @@ angular.module("angular.directives.integer", ['angular.directives.utils'])
 				scope.$apply(function(){
 					ctrl.$setViewValue(data);
 				});
-				data = applyFormat(data, GROUP_SEP);
+				data = applyFormat(data, getCulture());
 				element.val(data);
+				element[0].classList.remove(invalidClass);
 			});
 
 		}
