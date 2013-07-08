@@ -1,20 +1,20 @@
 'use strict';
 angular.module("angular.directives.float", ['angular.directives.utils'])
-	.directive("float", ['Utils', function(Utils){
-
-		function removeViewFormat(value, group_sep, dec_sep){
-			if(group_sep !== ''){
-				value = value.toString().split(group_sep);
+	.value('invalidClass',"css-invalid")
+	.directive("float", ['Utils',"invalidClass", function(Utils,invalidClass){
+		function removeViewFormat(value, culture){
+			if(culture.group_separator !== ''){
+				value = value.toString().split(culture.group_separator);
 				value = value.join("");
 			}
-			if(dec_sep !== '.'){
-				value = value.split(dec_sep);
+			if(culture.decimal_separator !== '.'){
+				value = value.split(culture.decimal_separator);
 				value = value.join('.');
 			}
 			return value;
 		}
 
-		function applyFormat(value, group_sep, dec_sep){
+		function applyFormat(value, culture){
 			var fractional_part = "",
 				integer_part,
 				dec_sep_index,
@@ -30,7 +30,7 @@ angular.module("angular.directives.float", ['angular.directives.utils'])
 			}
 			integer_part = value.slice(Number(is_negative), dec_sep_index === -1 ? value.length : dec_sep_index);
 			for(var i = integer_part.length - 4; i >= 0; i -= 3){
-				integer_part = integer_part.slice(0, i + 1) + group_sep + integer_part.slice(i + 1);
+				integer_part = integer_part.slice(0, i + 1) + culture.group_separator + integer_part.slice(i + 1);
 			}
 
 			if(is_negative){
@@ -38,7 +38,7 @@ angular.module("angular.directives.float", ['angular.directives.utils'])
 			}
 			new_value += integer_part;
 			if(dec_sep_index !== -1){
-				new_value += dec_sep + fractional_part;
+				new_value += culture.decimal_separator + fractional_part;
 			}
 			return new_value;
 		}
@@ -71,22 +71,18 @@ angular.module("angular.directives.float", ['angular.directives.utils'])
 		}
 
 		function linkFunction(scope, element, attrs, ctrl){
-			var DEC_SEP, GROUP_SEP, VALIDATORS;
+			var getCulture,VALIDATORS;
 			if(!ctrl){
 				return;
 			}
 
 			(function init(){
-				var language = attrs['culture'],
-					culture = null;
-				if(language){
-					culture = Utils.cultures.getCulture(language);
+				getCulture = Utils.cultures.getCurrentCulture;
+				if (attrs['culture']){
+					getCulture = function(){
+						return Utils.cultures.getCulture(attrs['culture']);
+					}
 				}
-				if(culture === null){
-					culture = Utils.cultures.getCurrentCulture();
-				}
-				DEC_SEP = culture.decimal_separator;
-				GROUP_SEP = culture.group_separator;
 
 				VALIDATORS = {
 					minval: parseFloat(attrs["minval"]),
@@ -100,6 +96,26 @@ angular.module("angular.directives.float", ['angular.directives.utils'])
 				}
 			})();
 
+			function viewChanged(data){
+				var temp_data = removeViewFormat(element.val(), getCulture()),
+					valid = validate(parseFloat(temp_data),VALIDATORS);
+
+				if(!isNaN(valid)){
+					valid = parseFloat(temp_data)===valid;
+				}
+				else{
+					valid = true;
+				}
+				if(!valid){
+					element[0].classList.add(invalidClass);
+				}
+				else{
+					element[0].classList.remove(invalidClass);
+				}
+
+				return data;
+			}
+
 			function modelChanged(data){
 				if(ctrl.$modelValue === undefined){
 					return data;
@@ -108,20 +124,21 @@ angular.module("angular.directives.float", ['angular.directives.utils'])
 				if(isNaN(data)){
 					return "";
 				}
-				data = applyFormat(data, GROUP_SEP, DEC_SEP);
+				data = applyFormat(data, getCulture());
 				return data;
 			}
 
+			ctrl.$parsers.unshift(viewChanged);
 			ctrl.$formatters.unshift(modelChanged);
 
 			element.bind('focus', function(){
-				var data = removeViewFormat(element.val(), GROUP_SEP, DEC_SEP);
-				data = data.replace('.', DEC_SEP);
+				var data = removeViewFormat(element.val(), getCulture());
+				data = data.replace('.', getCulture().decimal_separator);
 				element.val(data);
 			});
 
 			element.bind('blur', function(){
-				var data = removeViewFormat(element.val(), GROUP_SEP, DEC_SEP);
+				var data = removeViewFormat(element.val(), getCulture());
 
 				data = validate(parseFloat(data), VALIDATORS);
 				if(isNaN(data)){
@@ -131,8 +148,9 @@ angular.module("angular.directives.float", ['angular.directives.utils'])
 				scope.$apply(function(){
 					ctrl.$setViewValue(data);
 				});
-				data = applyFormat(data, GROUP_SEP, DEC_SEP);
+				data = applyFormat(data, getCulture());
 				element.val(data);
+				element[0].classList.remove(invalidClass);
 			});
 
 		}

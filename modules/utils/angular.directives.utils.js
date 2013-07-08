@@ -4,6 +4,11 @@ angular.module('angular.directives.utils', []).factory("Utils", function(){
 	var CULTURES = (function(){
 		var culture_list = [
 			{
+				language: "",
+				group_separator: "",
+				decimal_separator: "."
+			},
+			{
 				language: "en",
 				group_separator: ",",
 				decimal_separator: '.'
@@ -12,28 +17,22 @@ angular.module('angular.directives.utils', []).factory("Utils", function(){
 				language: "nl",
 				group_separator: ".",
 				decimal_separator: ","
-			},
-			{
-				language: "",
-				group_separator: "",
-				decimal_separator: "."
 			}
 		];
-		var current_culture = null;
-		setCurrentCulture("");
+		var current_culture = culture_list[0];
 
-		function setCurrentCulture(cultureLang){
+		function setCurrentCulture(lang){
 			for(var i = 0; i < culture_list.length; i++){
-				if(culture_list[i].language === cultureLang){
+				if(culture_list[i].language === lang){
 					current_culture = culture_list[i];
 					return;
 				}
 			}
 		}
 
-		function getCulture(cultureLang){
+		function getCulture(lang){
 			for(var i = 0; i < culture_list.length; i++){
-				if(culture_list[i].language === cultureLang){
+				if(culture_list[i].language === lang){
 					return angular.copy(culture_list[i]);
 				}
 			}
@@ -45,15 +44,9 @@ angular.module('angular.directives.utils', []).factory("Utils", function(){
 		}
 
 		return {
-			getCurrentCulture: function(){
-				return getCurrentCulture();
-			},
-			getCulture: function(cultureLang){
-				return getCulture(cultureLang);
-			},
-			setCurrentCulture: function(cultureLang){
-				setCurrentCulture(cultureLang);
-			}
+			getCurrentCulture: getCurrentCulture,
+			getCulture: getCulture,
+			setCurrentCulture: setCurrentCulture
 		}
 	})();
 
