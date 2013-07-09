@@ -28,7 +28,10 @@
 	<script type="text/javascript" src="../utils/angular.directives.utils.js"></script>
 	<script type="text/javascript" src="../directives/angular.directives.float.js"></script>
 	<script type="text/javascript">
-		angular.module("myapp", ['angular.directives.float']);
+		angular.module("myapp", ['angular.directives.float','angular.directives.utils']).run(['Utils',function(Utils){
+			window.hacks = Utils;
+
+		}]);
 	</script>
 </head>
 <body>
@@ -55,7 +58,11 @@
 
 		<span>If an input is greater than a maximum value, the model changes to that maximum value</span>
 		<span>Maximum value is -15:<float ng-model="test3" maxval="-15"></float></span>
-
+		<input type="text" ng-model="hello" />
+		{{ hello | float }}
+		<button onclick="hacks.cultures.setCurrentCulture('en')">Set to english</button>
+		<button onclick="hacks.cultures.setCurrentCulture('nl')">Set to dutch</button>
+		<button onclick="hacks.cultures.setCurrentCulture('')">Set to none</button>
 	</div>
 </div>
 </body>
