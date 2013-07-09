@@ -107,10 +107,10 @@ angular.module("angular.directives.float", ['angular.directives.utils'])
 					valid = true;
 				}
 				if(!valid){
-					element[0].classList.add(invalidClass);
+					element.addClass(invalidClass);
 				}
 				else{
-					element[0].classList.remove(invalidClass);
+					element.removeClass(invalidClass);
 				}
 
 				return data;
@@ -150,7 +150,7 @@ angular.module("angular.directives.float", ['angular.directives.utils'])
 				});
 				data = applyFormat(data, getCulture());
 				element.val(data);
-				element[0].classList.remove(invalidClass);
+				element.removeClass(invalidClass);
 			});
 
 		}

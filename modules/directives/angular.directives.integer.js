@@ -1,7 +1,7 @@
 'use strict';
 angular.module("angular.directives.integer", ['angular.directives.utils'])
-	.value('invalidClass',"css-invalid")
-	.directive("integer", ['Utils','invalidClass', function(Utils,invalidClass){
+	.value('invalidClass', "css-invalid")
+	.directive("integer", ['Utils', 'invalidClass', function(Utils, invalidClass){
 		function removeViewFormat(value, culture){
 			if(culture.group_separator !== ''){
 				value = value.toString().split(culture.group_separator);
@@ -54,14 +54,14 @@ angular.module("angular.directives.integer", ['angular.directives.utils'])
 		}
 
 		function linkFunction(scope, element, attrs, ctrl){
-			var getCulture,VALIDATORS;
+			var getCulture, VALIDATORS;
 			if(!ctrl){
 				return;
 			}
 
 			(function init(){
 				getCulture = Utils.cultures.getCurrentCulture;
-				if (attrs['culture']){
+				if(attrs['culture']){
 					getCulture = function(){
 						return Utils.cultures.getCulture(attrs['culture']);
 					}
@@ -75,19 +75,19 @@ angular.module("angular.directives.integer", ['angular.directives.utils'])
 
 			function viewChanged(data){
 				var temp_data = removeViewFormat(element.val(), getCulture()),
-					valid = validate(parseInt(temp_data,10),VALIDATORS);
+					valid = validate(parseInt(temp_data, 10), VALIDATORS);
 
 				if(!isNaN(valid)){
-					valid = parseInt(temp_data,10)===valid;
+					valid = parseInt(temp_data, 10) === valid;
 				}
 				else{
 					valid = true;
 				}
 				if(!valid){
-					element[0].classList.add(invalidClass);
+					element.addClass(invalidClass);
 				}
 				else{
-					element[0].classList.remove(invalidClass);
+					element.removeClass(invalidClass);
 				}
 
 				return data;
@@ -126,7 +126,7 @@ angular.module("angular.directives.integer", ['angular.directives.utils'])
 				});
 				data = applyFormat(data, getCulture());
 				element.val(data);
-				element[0].classList.remove(invalidClass);
+				element.removeClass(invalidClass);
 			});
 
 		}
