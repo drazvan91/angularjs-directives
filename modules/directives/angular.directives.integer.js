@@ -19,24 +19,26 @@ angular.module("angular.directives.integer", ['angular.directives.utils'])
 				};
 			})();
 
-			function viewChanged(data){
+			function viewChanged(){
 				var temp_data = Utils.formats.remove(element.val(), culture),
-					valid = Utils.parsers.validateNumber(parseInt(temp_data, 10), VALIDATORS);
+					validated = Utils.parsers.validateNumber(parseInt(temp_data, 10), VALIDATORS),
+					invalid=true;
 
-				if(!isNaN(valid)){
-					valid = parseInt(temp_data, 10) === valid;
+				if(!isNaN(validated)){
+					invalid = parseInt(temp_data, 10) !== validated;
+					if(invalid === false){
+						invalid = temp_data!==validated.toString();
+					}
 				}
-				else{
-					valid = true;
-				}
-				if(!valid){
+
+				if(invalid){
 					element.addClass(invalidClass);
 				}
 				else{
 					element.removeClass(invalidClass);
 				}
 
-				return data;
+				return validated;
 			}
 
 			function modelChanged(data){
@@ -50,9 +52,6 @@ angular.module("angular.directives.integer", ['angular.directives.utils'])
 				data = Utils.formats.apply(data, culture);
 				return data;
 			}
-
-			ctrl.$parsers.unshift(viewChanged);
-			ctrl.$formatters.unshift(modelChanged);
 
 			element.bind('focus', function(){
 				var data = Utils.formats.remove(element.val(), culture);
@@ -70,11 +69,13 @@ angular.module("angular.directives.integer", ['angular.directives.utils'])
 				scope.$apply(function(){
 					ctrl.$setViewValue(data);
 				});
-				data = Utils.formats.apply(data, culture);
+				data = Utils.formats.apply(data.toString(), culture);
 				element.val(data);
 				element.removeClass(invalidClass);
 			});
 
+			ctrl.$parsers.unshift(viewChanged);
+			ctrl.$formatters.unshift(modelChanged);
 		}
 
 		return{

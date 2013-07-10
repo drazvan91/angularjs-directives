@@ -23,7 +23,7 @@
 			border:2px solid red;
 		}
 	</style>
-	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.5/angular.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.js"></script>
 
 	<script type="text/javascript" src="../utils/angular.directives.utils.js"></script>
 	<script type="text/javascript" src="../directives/angular.directives.float.js"></script>
@@ -42,7 +42,7 @@
 		</label></span>
 		<span>Directive
 			  :
-			<float ng-model="age" minval="-1222.54" maxval="1222.55" culture="nl" precision="-1"
+			<float ng-model="age" minval="-1222.54" culture="nl" precision="-1"
 				   default="0"></float></span>
 	</div>
 
@@ -56,11 +56,12 @@
 		<span>If an input is greater than a maximum value, the model changes to that maximum value</span>
 		<span>Maximum value is -15:<float ng-model="test3" maxval="-15"></float></span>
 		<input type="text" ng-model="hello" />
-		{{ hello | float }}
+		<input type="text" ng-model="sal"/>
 		<button onclick="hacks.cultures.setCurrentCulture('en')">Set to english</button>
 		<button onclick="hacks.cultures.setCurrentCulture('nl')">Set to dutch</button>
 		<button onclick="hacks.cultures.setCurrentCulture('')">Set to none</button>
 	</div>
+	{{ hello | float}}
 </div>
 </body>
 

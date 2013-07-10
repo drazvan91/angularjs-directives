@@ -163,8 +163,12 @@ angular.module('angular.directives.utils', []).factory("Utils",function(){
 				return validators.maxval;
 			}
 			if(hasNumberValue(validators.precision)){
-				var multiplier = Math.pow(10, validators.precision);
-				input = Math.floor(input * multiplier) / multiplier;
+				var x = input.toString().indexOf('.');
+
+				if(x<0 || x+validators.precision+1 >= input.toString().length){
+					return input;
+				}
+				input = parseFloat(input.toString().slice(0,x+validators.precision+1));
 			}
 
 			return input;
@@ -181,12 +185,12 @@ angular.module('angular.directives.utils', []).factory("Utils",function(){
 		parsers: PARSERS
 	};
 }).filter("float", ['Utils', function(Utils){
-		return function(input, culture, precision){
-			input = Utils.parsers.validateNumber(parseFloat(input), {precision: precision || 2}) || "";
-			input = Utils.formats.apply(input.toString(), culture);
-
+		return function(input, options){
+			options = options || {};
+			input = Utils.parsers.validateNumber(parseFloat(input), {precision: options.precision || 2}) || "";
+			input = Utils.formats.apply(input.toString(), options.culture);
 			return input;
 		}
 	}]).run(['Utils', function(Utils){
 		window.hacks = Utils;
-	}]);
+	}]);;

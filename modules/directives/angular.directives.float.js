@@ -24,25 +24,26 @@ angular.module("angular.directives.float", ['angular.directives.utils'])
 				}
 			})();
 
-			function viewChanged(data){
+			function viewChanged(){
 
 				var temp_data = Utils.formats.remove(element.val(), culture)
-				var valid = Utils.parsers.validateNumber(parseFloat(temp_data), VALIDATORS);
+				var validated = Utils.parsers.validateNumber(parseFloat(temp_data), VALIDATORS);
+				var invalid = true;
+				if(!isNaN(validated)){
+					invalid = parseFloat(temp_data) !== validated;
+					if(invalid === false){
+						invalid = temp_data!==validated.toString();
+					}
+				}
 
-				if(!isNaN(valid)){
-					valid = parseFloat(temp_data) === valid;
-				}
-				else{
-					valid = true;
-				}
-				if(!valid){
+				if(invalid){
 					element.addClass(invalidClass);
 				}
 				else{
 					element.removeClass(invalidClass);
 				}
 
-				return data;
+				return validated;
 			}
 
 			function modelChanged(data){
@@ -79,7 +80,7 @@ angular.module("angular.directives.float", ['angular.directives.utils'])
 				scope.$apply(function(){
 					ctrl.$setViewValue(data);
 				});
-				data = Utils.formats.apply(data, culture);
+				data = Utils.formats.apply(data.toString(), culture);
 				element.val(data);
 				element.removeClass(invalidClass);
 			});
