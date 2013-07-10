@@ -3,25 +3,26 @@
 angular.module('angular.directives.utils', []).factory("Utils",function(){
 	var CULTURES = (function(){
 		var culture_list = [
-			{
-				language: "",
-				group_separator: "",
-				decimal_separator: "."
-			},
-			{
-				language: "en",
-				group_separator: ",",
-				decimal_separator: '.'
-			},
-			{
-				language: "nl",
-				group_separator: ".",
-				decimal_separator: ","
-			}
-		], current_culture = culture_list[0];
+				{
+					language: "",
+					group_separator: "",
+					decimal_separator: "."
+				},
+				{
+					language: "en",
+					group_separator: ",",
+					decimal_separator: '.'
+				},
+				{
+					language: "nl",
+					group_separator: ".",
+					decimal_separator: ","
+				}
+			],
+			current_culture = culture_list[0];
 
 		/**
-		 *
+		 * Sets the current culture and calls subscribers
 		 * @param {string} lang
 		 */
 		function setCurrentCulture(lang){
@@ -36,7 +37,7 @@ angular.module('angular.directives.utils', []).factory("Utils",function(){
 		/**
 		 * Returns a copy of the culture or null
 		 * @param {string} lang
-		 * @returns {object},{null}
+		 * @returns {object,null}
 		 */
 		function getCulture(lang){
 			for(var i = 0; i < culture_list.length; i++){
@@ -69,7 +70,7 @@ angular.module('angular.directives.utils', []).factory("Utils",function(){
 		 * @param {string} [culture]
 		 * @returns {string}
 		 */
-		function removeFormat(value,culture){
+		function removeFormat(value, culture){
 			if(!value){
 				return ""
 			}
@@ -125,9 +126,10 @@ angular.module('angular.directives.utils', []).factory("Utils",function(){
 			}
 			return new_value;
 		}
+
 		return {
-			apply:applyFormat,
-			remove:removeFormat
+			apply: applyFormat,
+			remove: removeFormat
 		};
 	})();
 
@@ -147,15 +149,13 @@ angular.module('angular.directives.utils', []).factory("Utils",function(){
 		 * @param {object} validators (default_val,minval,maxval,precision)
 		 * @returns {number,NaN}
 		 */
-		function validateNumber(input,validators){
-
+		function validateNumber(input, validators){
 			if(!hasNumberValue(input)){
 				if(hasNumberValue(validators.default_val)){
 					return validators.default_val;
 				}
 				return NaN;
 			}
-
 			if(hasNumberValue(validators.minval) && input < validators.minval){
 				return validators.minval;
 			}
@@ -170,9 +170,8 @@ angular.module('angular.directives.utils', []).factory("Utils",function(){
 			return input;
 		}
 
-
 		return {
-			validateNumber:validateNumber
+			validateNumber: validateNumber
 		}
 	})();
 
@@ -182,8 +181,12 @@ angular.module('angular.directives.utils', []).factory("Utils",function(){
 		parsers: PARSERS
 	};
 }).filter("float", ['Utils', function(Utils){
-		return function(input, culture){
-			input = Utils.formats.apply(input,culture);
+		return function(input, culture, precision){
+			input = Utils.parsers.validateNumber(parseFloat(input), {precision: precision || 2}) || "";
+			input = Utils.formats.apply(input.toString(), culture);
+
 			return input;
 		}
+	}]).run(['Utils', function(Utils){
+		window.hacks = Utils;
 	}]);

@@ -57,9 +57,6 @@ angular.module("angular.directives.float", ['angular.directives.utils'])
 				return data;
 			}
 
-			ctrl.$parsers.unshift(viewChanged);
-			ctrl.$formatters.unshift(modelChanged);
-
 			element.bind('focus', function(){
 				var data = Utils.formats.remove(element.val(), culture);
 				if(culture){
@@ -87,6 +84,8 @@ angular.module("angular.directives.float", ['angular.directives.utils'])
 				element.removeClass(invalidClass);
 			});
 
+			ctrl.$parsers.unshift(viewChanged);
+			ctrl.$formatters.unshift(modelChanged);
 		}
 
 		return{
