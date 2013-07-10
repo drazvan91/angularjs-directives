@@ -1,7 +1,6 @@
 'use strict';
 angular.module("angular.directives.float", ['angular.directives.utils'])
-	.value('invalidClass', "css-invalid")
-	.directive("float", ['Utils', "invalidClass", function(Utils, invalidClass){
+	.directive("float", ['Utils', function(Utils){
 
 		function linkFunction(scope, element, attrs, ctrl){
 			var culture, VALIDATORS;
@@ -37,10 +36,10 @@ angular.module("angular.directives.float", ['angular.directives.utils'])
 				}
 
 				if(invalid){
-					element.addClass(invalidClass);
+					element.addClass(Utils.ui.invalidCSS);
 				}
 				else{
-					element.removeClass(invalidClass);
+					element.removeClass(Utils.ui.invalidCSS);
 				}
 
 				return validated;
@@ -82,7 +81,7 @@ angular.module("angular.directives.float", ['angular.directives.utils'])
 				});
 				data = Utils.formats.apply(data.toString(), culture);
 				element.val(data);
-				element.removeClass(invalidClass);
+				element.removeClass(Utils.ui.invalidCSS);
 			});
 
 			ctrl.$parsers.unshift(viewChanged);

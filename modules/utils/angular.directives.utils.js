@@ -179,10 +179,17 @@ angular.module('angular.directives.utils', []).factory("Utils",function(){
 		}
 	})();
 
+	var UI = (function(){
+		return {
+			invalidCSS:"css-invalid"
+		}
+	})();
+
 	return {
 		cultures: CULTURES,
 		formats: FORMATS,
-		parsers: PARSERS
+		parsers: PARSERS,
+		ui:UI
 	};
 }).filter("float", ['Utils', function(Utils){
 		return function(input, options){
